@@ -12,21 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const jwt_guard_1 = require("./common/guards/jwt.guard");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getHello() {
-        return this.appService.getHello();
+    getProtected() {
+        return 'All Good';
     }
 };
 __decorate([
-    common_1.Get(),
+    common_1.Get('test'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", String)
-], AppController.prototype, "getHello", null);
+], AppController.prototype, "getProtected", null);
 AppController = __decorate([
+    common_1.UseGuards(jwt_guard_1.JwtGuard),
     common_1.Controller(),
     __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
