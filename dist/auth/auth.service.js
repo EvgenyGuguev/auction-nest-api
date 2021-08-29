@@ -13,6 +13,9 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const jwt_1 = require("@nestjs/jwt");
+const crypto_1 = require("crypto");
+const date_fns_1 = require("date-fns");
+const auth_constants_1 = require("./auth.constants");
 let AuthService = class AuthService {
     constructor(prisma, jwt) {
         this.prisma = prisma;
@@ -27,13 +30,35 @@ let AuthService = class AuthService {
         });
         if (!user)
             throw new common_1.UnauthorizedException('User not found');
+        return {
+            accessToken: this.setJwtToken(user),
+            refreshToken: await this.setRefreshToken(user),
+        };
+    }
+    setJwtToken(user) {
         return this.jwt.sign({
+            id: user.id,
             email: user.email,
         }, { expiresIn: '1h' });
     }
     verifyJwt(token) {
         const jwt = this.jwt.verify(token);
-        return { email: jwt.email };
+        return { id: jwt.id, email: jwt.email };
+    }
+    async setRefreshToken(user) {
+        const randomToken = crypto_1.randomBytes(30).toString('hex');
+        const newRefreshSession = await this.prisma.refreshToken.create({
+            data: {
+                user: {
+                    connect: { id: user.id },
+                },
+                createdAt: date_fns_1.addHours(new Date(), 3),
+                expiresIn: date_fns_1.addDays(new Date(), auth_constants_1.REFRESH_TOKEN_EXPIRE_DAYS),
+                isExpired: false,
+                token: randomToken,
+            },
+        });
+        return newRefreshSession.token;
     }
 };
 AuthService = __decorate([
