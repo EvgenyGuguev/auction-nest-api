@@ -29,7 +29,7 @@ let JwtGuard = class JwtGuard {
             return true;
         }
         catch (e) {
-            throw new common_1.UnauthorizedException('Need an authorization token');
+            throw new common_1.UnauthorizedException('Authorization required');
         }
     }
 };

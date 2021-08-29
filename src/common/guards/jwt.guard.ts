@@ -26,7 +26,7 @@ export class JwtGuard implements CanActivate {
       req.user = user;
       return true;
     } catch (e) {
-      throw new UnauthorizedException('Need an authorization token');
+      throw new UnauthorizedException('Authorization required');
     }
   }
 }

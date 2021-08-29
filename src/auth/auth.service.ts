@@ -1,11 +1,18 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Req, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, RefreshTokenDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { randomBytes } from 'crypto';
-import { addDays, addHours } from 'date-fns';
-import { REFRESH_TOKEN_EXPIRE_DAYS } from './auth.constants';
+import { addDays } from 'date-fns';
+import {
+  ERROR_REFRESH_NOT_VALID,
+  ERROR_REFRESH_TOKEN_EXPIRED,
+  ERROR_USER_TOT_FOUND,
+  REFRESH_TOKEN_EXPIRE_DAYS,
+} from './auth.constants';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +29,7 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user) throw new UnauthorizedException(ERROR_USER_TOT_FOUND);
 
     return {
       accessToken: this.setJwtToken(user),
@@ -36,7 +43,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
       },
-      { expiresIn: '1h' },
+      { expiresIn: '24h' },
     );
   }
 
@@ -45,21 +52,62 @@ export class AuthService {
     return { id: jwt.id, email: jwt.email };
   }
 
-  async setRefreshToken(user: User) {
+  private async setRefreshToken(user: User) {
     const randomToken = randomBytes(30).toString('hex');
+    const currentTime = zonedTimeToUtc(new Date(), 'UTC+3');
 
     const newRefreshSession = await this.prisma.refreshToken.create({
       data: {
         user: {
           connect: { id: user.id },
         },
-        createdAt: addHours(new Date(), 3),
-        expiresIn: addDays(new Date(), REFRESH_TOKEN_EXPIRE_DAYS),
+        createdAt: currentTime,
+        expiresIn: addDays(currentTime, REFRESH_TOKEN_EXPIRE_DAYS),
         isExpired: false,
         token: randomToken,
       },
     });
 
     return newRefreshSession.token;
+  }
+
+  public async getCurrentUserFromJWT(@Req() request: FastifyRequest) {
+    const authHeader = request.headers['authorization'];
+    if (authHeader) {
+      const token = authHeader.split(' ')[1];
+      const { id } = this.verifyJwt(token);
+      return await this.prisma.user.findUnique({
+        where: { id: id },
+      });
+    }
+  }
+
+  public async refresh(dto: RefreshTokenDto) {
+    const refreshTokenSession = await this.prisma.refreshToken.findFirst({
+      where: { token: dto.refreshToken },
+    });
+
+    if (!refreshTokenSession)
+      return new UnauthorizedException(ERROR_REFRESH_NOT_VALID);
+
+    if (refreshTokenSession && !refreshTokenSession.isExpired) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: refreshTokenSession.userId },
+      });
+
+      if (!user) throw new UnauthorizedException(ERROR_USER_TOT_FOUND);
+
+      await this.prisma.refreshToken.update({
+        where: { id: refreshTokenSession.id },
+        data: { isExpired: true },
+      });
+
+      return {
+        accessToken: this.setJwtToken(user),
+        refreshToken: await this.setRefreshToken(user),
+      };
+    }
+
+    return new UnauthorizedException(ERROR_REFRESH_TOKEN_EXPIRED);
   }
 }

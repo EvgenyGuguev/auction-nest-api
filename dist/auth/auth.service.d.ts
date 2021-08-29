@@ -1,7 +1,9 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, RefreshTokenDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { FastifyRequest } from 'fastify';
 export declare class AuthService {
     private readonly prisma;
     private readonly jwt;
@@ -15,5 +17,10 @@ export declare class AuthService {
         id: any;
         email: any;
     };
-    setRefreshToken(user: User): Promise<string>;
+    private setRefreshToken;
+    getCurrentUserFromJWT(request: FastifyRequest): Promise<User | null | undefined>;
+    refresh(dto: RefreshTokenDto): Promise<UnauthorizedException | {
+        accessToken: string;
+        refreshToken: string;
+    }>;
 }
