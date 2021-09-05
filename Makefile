@@ -1,3 +1,4 @@
+build: docker-dev-build
 up: docker-dev-up
 stop: docker-dev-stop
 restart: stop up
