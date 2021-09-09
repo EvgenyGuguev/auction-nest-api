@@ -11,13 +11,15 @@ import {
   ERROR_USER_TOT_FOUND,
   REFRESH_TOKEN_EXPIRE_DAYS,
 } from './auth.constants';
-import { zonedTimeToUtc } from 'date-fns-tz';
 import { FastifyRequest } from 'fastify';
+import { currentTime } from '../common/helpers/helper';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly accountService: AccountService,
     private readonly jwt: JwtService,
   ) {}
 
@@ -25,7 +27,7 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
-        passwordHash: dto.password,
+        passwordHash: this.accountService.hashPassword(dto.password),
       },
     });
 
@@ -54,7 +56,6 @@ export class AuthService {
 
   private async setRefreshToken(user: User) {
     const randomToken = randomBytes(30).toString('hex');
-    const currentTime = zonedTimeToUtc(new Date(), 'UTC+3');
 
     const newRefreshSession = await this.prisma.refreshToken.create({
       data: {

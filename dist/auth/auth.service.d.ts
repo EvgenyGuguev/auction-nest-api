@@ -4,10 +4,12 @@ import { AuthDto, RefreshTokenDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { FastifyRequest } from 'fastify';
+import { AccountService } from '../account/account.service';
 export declare class AuthService {
     private readonly prisma;
+    private readonly accountService;
     private readonly jwt;
-    constructor(prisma: PrismaService, jwt: JwtService);
+    constructor(prisma: PrismaService, accountService: AccountService, jwt: JwtService);
     login(dto: AuthDto): Promise<{
         accessToken: string;
         refreshToken: string;

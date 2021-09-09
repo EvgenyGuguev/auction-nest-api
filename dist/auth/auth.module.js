@@ -12,6 +12,7 @@ const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_1 = require("@nestjs/jwt");
 const prisma_module_1 = require("../prisma/prisma.module");
+const account_module_1 = require("../account/account.module");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -21,6 +22,7 @@ AuthModule = __decorate([
                 secret: 'superSecret',
             }),
             prisma_module_1.PrismaModule,
+            account_module_1.AccountModule,
         ],
         providers: [auth_service_1.AuthService],
         controllers: [auth_controller_1.AuthController],

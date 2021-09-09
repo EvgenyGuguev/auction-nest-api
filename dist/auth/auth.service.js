@@ -19,17 +19,19 @@ const jwt_1 = require("@nestjs/jwt");
 const crypto_1 = require("crypto");
 const date_fns_1 = require("date-fns");
 const auth_constants_1 = require("./auth.constants");
-const date_fns_tz_1 = require("date-fns-tz");
+const helper_1 = require("../common/helpers/helper");
+const account_service_1 = require("../account/account.service");
 let AuthService = class AuthService {
-    constructor(prisma, jwt) {
+    constructor(prisma, accountService, jwt) {
         this.prisma = prisma;
+        this.accountService = accountService;
         this.jwt = jwt;
     }
     async login(dto) {
         const user = await this.prisma.user.findFirst({
             where: {
                 email: dto.email,
-                passwordHash: dto.password,
+                passwordHash: this.accountService.hashPassword(dto.password),
             },
         });
         if (!user)
@@ -51,14 +53,13 @@ let AuthService = class AuthService {
     }
     async setRefreshToken(user) {
         const randomToken = crypto_1.randomBytes(30).toString('hex');
-        const currentTime = date_fns_tz_1.zonedTimeToUtc(new Date(), 'UTC+3');
         const newRefreshSession = await this.prisma.refreshToken.create({
             data: {
                 user: {
                     connect: { id: user.id },
                 },
-                createdAt: currentTime,
-                expiresIn: date_fns_1.addDays(currentTime, auth_constants_1.REFRESH_TOKEN_EXPIRE_DAYS),
+                createdAt: helper_1.currentTime,
+                expiresIn: date_fns_1.addDays(helper_1.currentTime, auth_constants_1.REFRESH_TOKEN_EXPIRE_DAYS),
                 isExpired: false,
                 token: randomToken,
             },
@@ -108,6 +109,7 @@ __decorate([
 AuthService = __decorate([
     common_1.Injectable(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        account_service_1.AccountService,
         jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
