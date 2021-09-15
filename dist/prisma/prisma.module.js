@@ -12,7 +12,7 @@ const prisma_service_1 = require("./prisma.service");
 let PrismaModule = class PrismaModule {
 };
 PrismaModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         exports: [prisma_service_1.PrismaService],
         providers: [prisma_service_1.PrismaService],
     })

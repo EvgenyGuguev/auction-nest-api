@@ -17,7 +17,7 @@ const account_module_1 = require("./account/account.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [auth_module_1.AuthModule, prisma_module_1.PrismaModule, account_module_1.AccountModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

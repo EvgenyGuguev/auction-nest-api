@@ -32,29 +32,29 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    common_1.Post('login'),
-    __param(0, common_1.Body()),
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [dto_1.AuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "authUser", null);
 __decorate([
-    common_1.UseGuards(jwt_guard_1.JwtGuard),
-    common_1.Get('current-user'),
-    __param(0, common_1.Req()),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard),
+    (0, common_1.Get)('current-user'),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "currentUser", null);
 __decorate([
-    common_1.Post('refresh'),
-    __param(0, common_1.Body()),
+    (0, common_1.Post)('refresh'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [dto_1.RefreshTokenDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "refresh", null);
 AuthController = __decorate([
-    common_1.Controller('auth'),
+    (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 exports.AuthController = AuthController;

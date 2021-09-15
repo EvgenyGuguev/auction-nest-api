@@ -52,14 +52,14 @@ let AuthService = class AuthService {
         return { id: jwt.id, email: jwt.email };
     }
     async setRefreshToken(user) {
-        const randomToken = crypto_1.randomBytes(30).toString('hex');
+        const randomToken = (0, crypto_1.randomBytes)(30).toString('hex');
         const newRefreshSession = await this.prisma.refreshToken.create({
             data: {
                 user: {
                     connect: { id: user.id },
                 },
                 createdAt: helper_1.currentTime,
-                expiresIn: date_fns_1.addDays(helper_1.currentTime, auth_constants_1.REFRESH_TOKEN_EXPIRE_DAYS),
+                expiresIn: (0, date_fns_1.addDays)(helper_1.currentTime, auth_constants_1.REFRESH_TOKEN_EXPIRE_DAYS),
                 isExpired: false,
                 token: randomToken,
             },
@@ -101,13 +101,13 @@ let AuthService = class AuthService {
     }
 };
 __decorate([
-    __param(0, common_1.Req()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthService.prototype, "getCurrentUserFromJWT", null);
 AuthService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         account_service_1.AccountService,
         jwt_1.JwtService])

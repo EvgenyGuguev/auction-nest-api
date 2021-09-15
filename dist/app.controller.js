@@ -22,14 +22,14 @@ let AppController = class AppController {
     }
 };
 __decorate([
-    common_1.Get('test'),
+    (0, common_1.Get)('test'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", String)
 ], AppController.prototype, "getProtected", null);
 AppController = __decorate([
-    common_1.UseGuards(jwt_guard_1.JwtGuard),
-    common_1.Controller(),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard),
+    (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
 exports.AppController = AppController;

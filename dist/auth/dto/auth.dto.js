@@ -14,12 +14,12 @@ const class_validator_1 = require("class-validator");
 class AuthDto {
 }
 __decorate([
-    class_validator_1.IsEmail(),
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AuthDto.prototype, "email", void 0);
 __decorate([
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], AuthDto.prototype, "password", void 0);
 exports.AuthDto = AuthDto;
