@@ -7,6 +7,7 @@ import {
   PASSWORD_HASH_SALT,
 } from './account.constants';
 import { currentTime } from '../common/helpers/helper';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AccountService {
@@ -33,7 +34,9 @@ export class AccountService {
     });
   }
 
-  public async update() {}
+  public async update() {
+
+  }
 
   public async delete() {}
 
