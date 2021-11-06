@@ -1,4 +1,27 @@
 services:
+  api:
+    container_name: auction_nest_api_dev
+    build:
+      context: .
+      dockerfile: ./docker/development/Dockerfile
+    ports:
+      - "3030:3000"
+    networks:
+      - default
+      - traefik-public
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/auction?schema=public
+    depends_on:
+      - db
+    command: yarn start:dev
+    labels:
+      - traefik.docker.network=traefik-public
+      - traefik.enable=true
+      - traefik.http.routers.api.rule=Host(`api.localhost`)
+      - traefik.http.routers.api.entrypoints=web
+
   db:
     container_name: auction_nest_db_dev
     image: postgres:13.4
@@ -8,3 +31,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auction
+
+networks:
+    traefik-public:
+        external: true

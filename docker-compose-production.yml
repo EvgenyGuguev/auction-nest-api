@@ -1,0 +1,23 @@
+services:
+  api:
+    container_name: auction_nest_api
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/production/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    command: yarn start:prod
+
+  db:
+    container_name: auction_nest_db
+    restart: always
+    image: postgres:13.4
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auction
