@@ -1,6 +1,6 @@
 build: docker-dev-build
 up: docker-dev-up
-up-db: docker-dev-up-only-db
+up-dev: docker-dev-up-dev
 stop: docker-dev-stop
 restart: stop up
 logs: docker-dev-logs
@@ -17,5 +17,5 @@ docker-dev-stop:
 docker-dev-logs:
 	docker compose -f docker-compose.yml logs -f
 
-docker-dev-up-only-db:
-	docker compose -f docker-compose.yml up -d db
+docker-dev-up-dev:
+	docker compose -f docker-compose.yml up -d db mailer

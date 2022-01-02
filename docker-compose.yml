@@ -24,13 +24,28 @@ services:
 
   db:
     container_name: auction_nest_db_dev
-    image: postgres:13.4
+    image: postgres:14.1
     ports:
       - "5433:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: auction
+
+  mailer:
+    container_name: auction_nest_mailer_dev
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - default
+      - traefik-public
+    labels:
+      - traefik.docker.network=traefik-public
+      - traefik.enable=true
+      - traefik.http.routers.mailer.rule=Host(`mailer.localhost`)
+      - traefik.http.routers.mailer.entrypoints=web
 
 networks:
     traefik-public:
