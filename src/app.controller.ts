@@ -8,12 +8,12 @@ import { NotifireService } from '@notifire/nest';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly notifire: NotifireService,
+    private readonly mailService: NotifireService,
   ) {}
 
   @Get('test')
   async getProtected() {
-    await this.notifire.trigger('test-email', {
+    await this.mailService.trigger('test-email', {
       $email: 'reciever@mail.com',
       $user_id: 'id',
       firstName: 'John',

@@ -13,6 +13,8 @@ services:
       - .:/app
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/auction?schema=public
+      MAIL_PORT: 1025
+      MAIL_FROM: mail@auction.com
     depends_on:
       - db
     command: yarn start:dev
@@ -46,6 +48,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mailer.rule=Host(`mailer.localhost`)
       - traefik.http.routers.mailer.entrypoints=web
+      - traefik.http.services.mailer.loadBalancer.server.port=8025
 
 networks:
     traefik-public:

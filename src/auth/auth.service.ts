@@ -77,7 +77,7 @@ export class AuthService {
     if (authHeader) {
       const token = authHeader.split(' ')[1];
       const { id } = this.verifyJwt(token);
-      return await this.prisma.user.findUnique({
+      return this.prisma.user.findUnique({
         where: { id: id },
       });
     }
